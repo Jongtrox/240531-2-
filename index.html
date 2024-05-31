@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Organic Geometric Pattern Animation</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Shape {
+            constructor() {
+                this.points = [
+                    {x: canvas.width / 2, y: canvas.height / 4},
+                    {x: canvas.width / 4, y: 3 * canvas.height / 4},
+                    {x: 3 * canvas.width / 4, y: 3 * canvas.height / 4}
+                ];
+                this.targetPoints = this.generateNewShape();
+                this.changeInterval = 100;
+                this.changeCounter = 0;
+                this.transitionSpeed = 0.05;
+            }
+
+            draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.moveTo(this.points[0].x, this.points[0].y);
+                this.points.forEach(point => {
+                    ctx.lineTo(point.x, point.y);
+                });
+                ctx.closePath();
+                ctx.stroke();
+            }
+
+            update() {
+                this.changeCounter++;
+                if (this.changeCounter >= this.changeInterval) {
+                    this.targetPoints = this.generateNewShape();
+                    this.changeCounter = 0;
+                }
+
+                this.points.forEach((point, index) => {
+                    point.x += (this.targetPoints[index].x - point.x) * this.transitionSpeed;
+                    point.y += (this.targetPoints[index].y - point.y) * this.transitionSpeed;
+                });
+
+                this.draw();
+            }
+
+            generateNewShape() {
+                const shapes = [
+                    [
+                        {x: canvas.width / 2, y: canvas.height / 4},
+                        {x: canvas.width / 4, y: 3 * canvas.height / 4},
+                        {x: 3 * canvas.width / 4, y: 3 * canvas.height / 4}
+                    ],
+                    [
+                        {x: canvas.width / 4, y: canvas.height / 4},
+                        {x: 3 * canvas.width / 4, y: canvas.height / 4},
+                        {x: 3 * canvas.width / 4, y: 3 * canvas.height / 4},
+                        {x: canvas.width / 4, y: 3 * canvas.height / 4}
+                    ],
+                    [
+                        {x: canvas.width / 2, y: canvas.height / 4},
+                        {x: canvas.width / 4, y: canvas.height / 2},
+                        {x: canvas.width / 2, y: 3 * canvas.height / 4},
+                        {x: 3 * canvas.width / 4, y: canvas.height / 2}
+                    ]
+                ];
+
+                return shapes[Math.floor(Math.random() * shapes.length)];
+            }
+        }
+
+        const shape = new Shape();
+
+        function animate() {
+            shape.update();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
